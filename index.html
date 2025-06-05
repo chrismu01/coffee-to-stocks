@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Coffee ➜ Stocks Converter</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>☕ ➜ 📈 Coffee-to-Stocks Converter</h1>
+
+  <label>
+    Daily latte cost $
+    <input id="cost" type="number" min="1" step="0.25" value="4">
+  </label>
+
+  <label>
+    Years invested
+    <input id="years" type="range" min="5" max="30" value="20">
+    <span id="yLbl">20 yrs</span>
+  </label>
+
+  <canvas id="chart" height="200"></canvas>
+
+  <script>
+  /* --- simple JS; no build tools --- */
+  const cost  = document.getElementById('cost');
+  const yrs   = document.getElementById('years');
+  const yLbl  = document.getElementById('yLbl');
+  const ctx   = document.getElementById('chart');
+  const labels = Array.from({length:30},(_,i)=>i+1);
+  const line   = new Chart(ctx,{type:'line',
+      data:{labels,datasets:[{data:[],fill:true,tension:.25}]},
+      options:{plugins:{legend:{display:false}},
+               scales:{y:{ticks:{callback:v=>'$'+v.toLocaleString()}}}}});
+  const fv = (c,n,r=.08)=>c*365*((Math.pow(1+r,n)-1)/r);
+  function redraw(){
+    yLbl.textContent = yrs.value+' yrs';
+    const c=parseFloat(cost.value);
+    line.data.datasets[0].data = labels.map(y=>fv(c,y));
+    line.update();
+  }
+  cost.oninput = yrs.oninput = redraw; redraw();
+  </script>
+</body>
+</html>
