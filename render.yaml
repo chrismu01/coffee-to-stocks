@@ -1,6 +1,6 @@
 services:
   # ---------- 1. MariaDB (private) ----------
-  - type: private
+  - type: pserv
     name: wp-db
     runtime: docker
     plan: free
