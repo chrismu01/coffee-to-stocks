@@ -1,0 +1,40 @@
+services:
+  # ---------- 1. MariaDB (private) ----------
+  - type: private
+    name: wp-db
+    runtime: docker
+    plan: free
+    image: mariadb:11
+    envVars:
+      - key: MYSQL_DATABASE
+        value: wordpress
+      - key: MYSQL_USER
+        value: wp
+      - key: MYSQL_PASSWORD
+        value: wppass
+      - key: MYSQL_ROOT_PASSWORD
+        value: rootpass
+    disks:
+      - name: db_data
+        mountPath: /var/lib/mysql
+        sizeGB: 5
+
+  # ---------- 2. WordPress (web) ----------
+  - type: web
+    name: wordpress
+    runtime: docker
+    plan: free
+    image: wordpress:6.5-apache
+    envVars:
+      - key: WORDPRESS_DB_HOST
+        value: wp-db:3306
+      - key: WORDPRESS_DB_NAME
+        value: wordpress
+      - key: WORDPRESS_DB_USER
+        value: wp
+      - key: WORDPRESS_DB_PASSWORD
+        value: wppass
+    disks:
+      - name: wp_data
+        mountPath: /var/www/html
+        sizeGB: 2
