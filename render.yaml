@@ -1,9 +1,9 @@
 services:
   # ---------- 1. MariaDB (private) ----------
-  - type: pserv
+  - type: pserv                 # private service
     name: wp-db
-    runtime: docker
-    plan: free
+    env: docker                 # <── use env, not runtime
+    plan: starter               # “starter” is the free plan
     image: mariadb:11
     envVars:
       - key: MYSQL_DATABASE
@@ -22,8 +22,8 @@ services:
   # ---------- 2. WordPress (web) ----------
   - type: web
     name: wordpress
-    runtime: docker
-    plan: free
+    env: docker                 # <── same here
+    plan: starter
     image: wordpress:6.5-apache
     envVars:
       - key: WORDPRESS_DB_HOST
