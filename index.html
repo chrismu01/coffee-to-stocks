@@ -2,46 +2,85 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Coffee ➜ Stocks Converter</title>
+  <title>Coffee → Stocks Converter</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- CSS -->
   <link rel="stylesheet" href="styles.css" />
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Chart.js (UMD build) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Our app logic (deferred) -->
+  <script defer src="app.js"></script>
 </head>
 <body>
-  <h1>☕ ➜ 📈 Coffee-to-Stocks Converter</h1>
+  <!-- ── HEADER ─────────────────────────────── -->
+  <header>
+    <h1>☕ ➜ 📈 Coffee-to-Stocks Converter</h1>
+    <p class="tagline">Discover what your daily latte could become if you invested it instead.</p>
+  </header>
 
-  <label>
-    Daily latte cost $
-    <input id="cost" type="number" min="1" step="0.25" value="4">
-  </label>
+  <!-- ── MAIN CARD ───────────────────────────── -->
+  <main class="card">
+    <div class="field">
+      <label for="cost">Daily latte cost ($)</label>
+      <input id="cost" type="number" min="1" step="0.25" value="4">
+    </div>
 
-  <label>
-    Years invested
-    <input id="years" type="range" min="5" max="30" value="20">
-    <span id="yLbl">20 yrs</span>
-  </label>
+    <div class="field">
+      <label for="years">Years invested: <span id="yearsLabel">20</span></label>
+      <input id="years" type="range" min="5" max="30" value="20">
+    </div>
 
-  <canvas id="chart" height="200"></canvas>
+    <div class="field">
+      <label for="rate">Average annual return</label>
+      <select id="rate">
+        <option value="0.06">6 %</option>
+        <option value="0.08" selected>8 %</option>
+        <option value="0.10">10 %</option>
+      </select>
+    </div>
 
-  <script>
-  /* --- simple JS; no build tools --- */
-  const cost  = document.getElementById('cost');
-  const yrs   = document.getElementById('years');
-  const yLbl  = document.getElementById('yLbl');
-  const ctx   = document.getElementById('chart');
-  const labels = Array.from({length:30},(_,i)=>i+1);
-  const line   = new Chart(ctx,{type:'line',
-      data:{labels,datasets:[{data:[],fill:true,tension:.25}]},
-      options:{plugins:{legend:{display:false}},
-               scales:{y:{ticks:{callback:v=>'$'+v.toLocaleString()}}}}});
-  const fv = (c,n,r=.08)=>c*365*((Math.pow(1+r,n)-1)/r);
-  function redraw(){
-    yLbl.textContent = yrs.value+' yrs';
-    const c=parseFloat(cost.value);
-    line.data.datasets[0].data = labels.map(y=>fv(c,y));
-    line.update();
-  }
-  cost.oninput = yrs.oninput = redraw; redraw();
-  </script>
+    <button id="calcBtn" class="btn">Calculate 🚀</button>
+
+    <h2 id="result">$0</h2>
+
+    <!-- spent vs future bar -->
+    <div class="bars">
+      <div id="futureBar" class="bar future"></div>
+      <div id="spentBar"  class="bar spent"></div>
+    </div>
+
+    <canvas id="chart" height="220"></canvas>
+
+    <a id="share" class="btn secondary" target="_blank" rel="noopener">Share result 🎉</a>
+  </main>
+
+  <!-- ── FOOTER ─────────────────────────────── -->
+  <footer>
+  <!-- what the site does -->
+  <p class="foot-desc">
+    <strong>Coffee-to-Stocks</strong> converts the price of your daily latte into its
+    potential future value. Enter a cost, pick an investment horizon and return rate,
+    then watch an instant calculation, animated counter, and growth charts that reveal
+    just how powerful compounding can be.
+  </p>
+
+  <!-- unique feature highlights -->
+  <ul class="features">
+    <li>Adjustable return rate (6 % / 8 % / 10 %)</li>
+    <li>Animated dollar counter &amp; live Chart.js visual</li>
+    <li>Side-by-side <em>Spent vs Future-Value</em> bar comparison</li>
+    <li>One-click tweet to share your results 🚀</li>
+    <li>Light / dark mode toggle 🌙</li>
+  </ul>
+
+  <!-- credit + theme toggle -->
+  <p class="credit">
+    Made with ☕&nbsp;and ⌨️ by Jordyn.
+    <button id="modeToggle" class="mode-btn" aria-label="Toggle dark mode">🌙</button>
+  </p>
+</footer>
 </body>
 </html>
